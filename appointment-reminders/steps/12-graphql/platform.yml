@@ -41,10 +41,12 @@ timers:
     cron: '0 * * * * *' # every minute, so you can watch it locally
     runImmediatly: false
 
-# GraphQL on the same HTTP server, generated from the ontology.
+# GraphQL on the same HTTP server: generated from the ontology, plus the service handlers.
 graphqls:
   - name: graphql
     useHttp: api
     path: /graphql
     ontologies:
       - AppointmentsOntology
+    services:
+      - name: AppointmentsService

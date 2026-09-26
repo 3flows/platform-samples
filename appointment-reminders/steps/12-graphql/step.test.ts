@@ -48,6 +48,11 @@ describe('Step 12: GraphQL from the ontology', () => {
         assert.ok(appointments.elements.every((a: any) => typeof a.customer.name === 'string'));
     });
 
+    test('service handlers are GraphQL fields too', async () => {
+        const { listAppointments } = await graphql(`{ listAppointments { id name at } }`);
+        assert.equal(listAppointments.length, 3);
+    });
+
     test('generated mutations write through the same entities', async () => {
         const { addCustomer } = await graphql(`mutation {
             addCustomer(input: { name: "Cleo", phone: "+15550000003" }) { _id name }

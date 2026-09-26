@@ -20,6 +20,7 @@ describe('Step 09: operate the service', () => {
         const ping = await (await fetch(`${base}/ping`)).json();
         assert.equal(ping.name, 'appointment-reminders');
         assert.equal(ping.status, 'OK');
+        assert.equal(ping.version, '0.1.0'); // from package.json
         assert.ok(Array.isArray(ping.pings));
     });
 
