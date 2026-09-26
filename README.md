@@ -5,7 +5,8 @@ The samples back the tutorial in the [platform documentation](https://3flows.git
 
 ## Appointment reminders
 
-A small app that grows step by step – from Hello World to two cooperating processes.
+A small app that grows step by step – from Hello World to two cooperating processes, a domain model and a generated GraphQL API.
+Steps 09–13 continue from the single-process version of step 07.
 
 | Step | Concept |
 |---|---|
@@ -18,6 +19,11 @@ A small app that grows step by step – from Hello World to two cooperating proc
 | [06-async-with-queues](appointment-reminders/steps/06-async-with-queues) | `mq` |
 | [07-notifications-service](appointment-reminders/steps/07-notifications-service) | Service-to-service calls |
 | [08-separate-processes](appointment-reminders/steps/08-separate-processes) | `remotes` – same code, two processes |
+| [09-operations](appointment-reminders/steps/09-operations) | Built-in endpoints: ping, health, metrics, OpenAPI, JSON-RPC |
+| [10-entities](appointment-reminders/steps/10-entities) | Entities and references |
+| [11-ontology](appointment-reminders/steps/11-ontology) | Ontology – the domain model in one place |
+| [12-graphql](appointment-reminders/steps/12-graphql) | GraphQL generated from the ontology |
+| [13-admin](appointment-reminders/steps/13-admin) | Admin / control-plane API |
 
 Every step is complete and has a test. All steps use in-memory providers, so no database, broker or SMS account is needed.
 
