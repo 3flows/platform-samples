@@ -1,0 +1,10 @@
+name: appointment-reminders
+
+services:
+  - name: AppointmentsService
+
+https:
+  - name: api
+    port: 3000
+    services:
+      - name: AppointmentsService

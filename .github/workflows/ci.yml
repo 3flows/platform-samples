@@ -1,0 +1,46 @@
+name: Samples
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  appointment-reminders:
+    runs-on: ubuntu-latest
+    env:
+      # The platform repository is private. Provide a token with read access as PLATFORM_REPO_TOKEN.
+      PLATFORM_REPO_TOKEN: ${{ secrets.PLATFORM_REPO_TOKEN }}
+    steps:
+      - name: Skip without platform access
+        if: env.PLATFORM_REPO_TOKEN == ''
+        run: echo "PLATFORM_REPO_TOKEN is not configured; skipping sample tests."
+
+      - uses: actions/checkout@v4
+        if: env.PLATFORM_REPO_TOKEN != ''
+        with:
+          path: platform-samples
+
+      - uses: actions/checkout@v4
+        if: env.PLATFORM_REPO_TOKEN != ''
+        with:
+          repository: 3flows/platform
+          ref: nx
+          token: ${{ secrets.PLATFORM_REPO_TOKEN }}
+          path: platform
+
+      - uses: actions/setup-node@v4
+        if: env.PLATFORM_REPO_TOKEN != ''
+        with:
+          node-version: 24
+
+      - name: Build platform
+        if: env.PLATFORM_REPO_TOKEN != ''
+        working-directory: platform
+        run: corepack enable && yarn install && yarn build
+
+      - name: Test samples
+        if: env.PLATFORM_REPO_TOKEN != ''
+        working-directory: platform-samples/appointment-reminders
+        run: npm install && npm test

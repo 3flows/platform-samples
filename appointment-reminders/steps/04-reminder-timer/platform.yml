@@ -1,0 +1,24 @@
+name: appointment-reminders
+
+services:
+  - name: AppointmentsService
+
+https:
+  - name: api
+    port: 3000
+    services:
+      - name: AppointmentsService
+
+docs:
+  - name: DEFAULT
+    type: memory
+
+smss:
+  - name: DEFAULT
+    type: memory
+
+timers:
+  - service: AppointmentsService
+    name: reminders
+    cron: '0 * * * * *' # every minute, so you can watch it locally
+    runImmediatly: false
