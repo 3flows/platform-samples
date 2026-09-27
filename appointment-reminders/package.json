@@ -21,7 +21,13 @@
     "step:10": "npm run build && node dist/steps/10-entities/main.js",
     "step:11": "npm run build && node dist/steps/11-ontology/main.js",
     "step:12": "npm run build && node dist/steps/12-graphql/main.js",
-    "step:13": "npm run build && node dist/steps/13-admin/main.js"
+    "step:13": "npm run build && node dist/steps/13-admin/main.js",
+    "step:14": "npm run build && node dist/steps/14-natural-keys/main.js",
+    "step:15": "npm run build && node dist/steps/15-transformers/main.js",
+    "step:16": "npm run build && node dist/steps/16-pipelines/main.js",
+    "step:17": "npm run build && node dist/steps/17-sql-sync/main.js",
+    "step:18": "npm run build && node dist/steps/18-dead-letters/main.js",
+    "step:19": "npm run build && node dist/steps/19-medallion-lineage/main.js"
   },
   "dependencies": {
     "@3flows/platform": "file:../../platform"

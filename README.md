@@ -5,8 +5,9 @@ The samples back the tutorial in the [platform documentation](https://3flows.git
 
 ## Appointment reminders
 
-A small app that grows step by step – from Hello World to two cooperating processes, a domain model and a generated GraphQL API.
-Steps 09–13 continue from the single-process version of step 07.
+A small app that grows step by step – from Hello World to two cooperating processes, a domain model, a generated GraphQL API
+and finally a small data hub that imports, syncs and exports data through pipelines.
+Steps 09–13 continue from the single-process version of step 07. Steps 14–19 continue from step 13.
 
 | Step | Concept |
 |---|---|
@@ -24,8 +25,14 @@ Steps 09–13 continue from the single-process version of step 07.
 | [11-ontology](appointment-reminders/steps/11-ontology) | Ontology – the domain model in one place |
 | [12-graphql](appointment-reminders/steps/12-graphql) | GraphQL generated from the ontology |
 | [13-admin](appointment-reminders/steps/13-admin) | Admin / control-plane API |
+| [14-natural-keys](appointment-reminders/steps/14-natural-keys) | Natural keys – identity derived from the data |
+| [15-transformers](appointment-reminders/steps/15-transformers) | Transformers – CSV import into entities, CSV export |
+| [16-pipelines](appointment-reminders/steps/16-pipelines) | Pipelines triggered by HTTP uploads and queues |
+| [17-sql-sync](appointment-reminders/steps/17-sql-sync) | `sqls` and timers – sync from a database |
+| [18-dead-letters](appointment-reminders/steps/18-dead-letters) | Dead letters for records that can't be processed |
+| [19-medallion-lineage](appointment-reminders/steps/19-medallion-lineage) | Bronze, silver, gold and lineage |
 
-Every step is complete and has a test. All steps use in-memory providers, so no database, broker or SMS account is needed.
+Every step is complete and has a test. All steps use in-memory providers, so no database, broker, SMS account or SQL server is needed.
 
 ## Run
 
