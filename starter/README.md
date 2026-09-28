@@ -7,11 +7,10 @@ Setup, step by step: https://3flows.github.io/platform-docs/docs/tutorial/setup
 
 ```sh
 corepack enable
+export NPM_REPOSITORY_GH_TOKEN=<a GitHub token with read:packages>
 yarn install
 yarn start        # the platform starts; curl localhost:3000/health answers OK
 yarn test
 ```
 
-`package.json` links the platform from a local checkout next to this repository (`portal:../../platform`),
-because the features used in the tutorial are not published yet. If you copy the starter somewhere else,
-adjust that path. Once the platform is published, replace it with `"@3flows/platform": "next"`.
+The platform comes from GitHub Packages, tag `next`. `yarn up @3flows/platform@next` updates it.

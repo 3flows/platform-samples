@@ -34,7 +34,7 @@
     "step:21:appointments": "node dist/steps/21-discovery/appointments-main.js"
   },
   "dependencies": {
-    "@3flows/platform": "portal:../../platform"
+    "@3flows/platform": "next"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

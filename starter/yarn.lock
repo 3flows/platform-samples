@@ -1347,16 +1347,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"appointment-reminders@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "appointment-reminders@workspace:."
-  dependencies:
-    "@3flows/platform": "npm:next"
-    "@types/node": "npm:^24.0.0"
-    typescript: "npm:^6.0.3"
-  languageName: unknown
-  linkType: soft
-
 "archiver@npm:^8.0.0":
   version: 8.0.0
   resolution: "archiver@npm:8.0.0"
@@ -3333,6 +3323,16 @@ __metadata:
   checksum: 10c0/4e271959ba4c9184f26dbd98a06eeb2ee8008e8ca2d1d30cb7856f642678648c085ed064627e9db01ae07442adfd275a7124fb409335a8f754ec41df51f1f1d0
   languageName: node
   linkType: hard
+
+"my-platform-app@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "my-platform-app@workspace:."
+  dependencies:
+    "@3flows/platform": "npm:next"
+    "@types/node": "npm:^24.0.0"
+    typescript: "npm:^6.0.3"
+  languageName: unknown
+  linkType: soft
 
 "negotiator@npm:^1.0.0":
   version: 1.1.0

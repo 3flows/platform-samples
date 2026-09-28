@@ -49,14 +49,11 @@ Copy it, or follow the [setup page](https://3flows.github.io/platform-docs/docs/
 ## Run
 
 You need Node.js 24+, Corepack (it ships with Node.js) and access to the 3flows repositories on GitHub.
-
-The samples reference the platform as a sibling checkout (`../platform`, branch `nx`),
-because the features used here are not yet published to the package registry.
+The platform comes from GitHub Packages (`@3flows/platform@next`), which needs a GitHub token with `read:packages`.
 
 ```sh
 corepack enable
-git clone https://github.com/3flows/platform.git
-(cd platform && git checkout nx && yarn install && yarn build)
+export NPM_REPOSITORY_GH_TOKEN=<a GitHub token with read:packages>
 git clone https://github.com/3flows/platform-samples.git
 cd platform-samples/appointment-reminders
 yarn install
@@ -64,3 +61,5 @@ yarn test                 # runs every step
 yarn step:03              # runs a single step
 yarn step:21:registry     # multi-process steps have one script per process
 ```
+
+To pick up a newer `next` build of the platform: `yarn up @3flows/platform@next`.

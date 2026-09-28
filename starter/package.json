@@ -13,7 +13,7 @@
     "test": "yarn build && node --test dist/*.test.js"
   },
   "dependencies": {
-    "@3flows/platform": "portal:../../platform"
+    "@3flows/platform": "next"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

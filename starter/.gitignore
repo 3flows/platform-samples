@@ -3,4 +3,3 @@ dist/
 .yarn/*
 !.yarn/releases
 .pnp.*
-yarn.lock
