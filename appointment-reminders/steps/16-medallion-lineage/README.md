@@ -4,7 +4,7 @@ The import keeps raw rows (bronze), cleaned rows (silver) and the domain model (
 Every pipeline records what it read and wrote, so you can ask where data comes from.
 
 ```sh
-npm run step:16
+yarn step:16
 printf 'Name;Mobile;Date;Notes\nAda Lovelace;+1 555 000 0001;2030-01-15 10:00;\nBad Date;+1 555 000 0004;someday;\n' > legacy.csv
 curl -X POST localhost:3000/data/imports/appointments -H 'Content-Type: text/csv' --data-binary @legacy.csv
 curl -X POST localhost:3000/data/syncs/practice

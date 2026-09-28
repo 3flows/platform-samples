@@ -4,7 +4,7 @@ The ontology declares what identifies a customer (`phone`) and an appointment (`
 IDs are derived from the data, so creating the same customer twice updates it instead of duplicating it.
 
 ```sh
-npm run step:11
+yarn step:11
 curl -X POST localhost:3000/bookAppointment -H 'Content-Type: application/json' \
   -d '{"name":"Ada","phone":"+15550000001","at":"2030-01-15T10:00:00.000Z"}'
 ```

@@ -1,0 +1,6 @@
+name: my-platform-app
+
+# One HTTP server. There are no services on it yet, but /health, /ping and /metrics already work.
+https:
+  - name: api
+    port: 3000

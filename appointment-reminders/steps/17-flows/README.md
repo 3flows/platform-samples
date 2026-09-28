@@ -5,7 +5,7 @@ The `ReferralFlow` notifies reception, waits for the review, runs the import pip
 and tells the practice. While it waits, the run is a document in `datahub.flow_runs`.
 
 ```sh
-npm run step:17
+yarn step:17
 curl -X POST localhost:3000/data/flows/referrals -H 'Content-Type: application/json' \
   -d '{"practice":"Hopper Family Practice","contact":"+15550000200","referrals":[{"name":"Dorothy Vaughan","phone":"+15550000011","at":"2030-02-01T09:00:00.000Z"}]}'
 curl -X POST localhost:3000/reception/pendingReviews

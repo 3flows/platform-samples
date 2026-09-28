@@ -3,7 +3,7 @@
 A timer route reminds appointments in the next 24 hours – and reveals a problem: every run reminds again.
 
 ```sh
-npm run step:04
+yarn step:04
 curl -X POST localhost:3000/sendDueReminders
 ```
 

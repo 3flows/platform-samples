@@ -3,7 +3,7 @@
 One service, one handler, ten lines of YAML.
 
 ```sh
-npm run step:00
+yarn step:00
 curl -X POST localhost:3000/hello -H 'Content-Type: application/json' -d '{"name":"Ada"}'
 ```
 

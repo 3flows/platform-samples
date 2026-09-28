@@ -4,9 +4,9 @@ The code is identical to step 20. `remotes` is gone: the notifications process r
 and the appointments process looks services up there.
 
 ```sh
-npm run step:21:registry        # terminal 1
-npm run step:21:notifications   # terminal 2
-npm run step:21:appointments    # terminal 3
+yarn step:21:registry        # terminal 1
+yarn step:21:notifications   # terminal 2
+yarn step:21:appointments    # terminal 3
 curl -X POST localhost:3100/.registry/list
 ```
 

@@ -3,7 +3,7 @@
 A read-only control-plane API describing services, configuration, entities, ontologies and GraphQL endpoints – YAML only.
 
 ```sh
-npm run step:19
+yarn step:19
 curl localhost:3000/admin/api/summary
 ```
 

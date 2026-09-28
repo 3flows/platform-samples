@@ -41,20 +41,26 @@ Every step continues from the one before it.
 
 Every step is complete and has a test. All steps use in-memory providers, so no database, broker, SMS account or SQL server is needed.
 
+## Start your own project
+
+[`starter/`](starter) is an empty project: `package.json`, `tsconfig.json`, `.yarnrc.yml`, one HTTP server and a test.
+Copy it, or follow the [setup page](https://3flows.github.io/platform-docs/docs/tutorial/setup) of the tutorial.
+
 ## Run
 
-Requires Node.js 24+.
+You need Node.js 24+, Corepack (it ships with Node.js) and access to the 3flows repositories on GitHub.
 
-The samples currently reference the platform as a sibling checkout (`../platform`, branch `next`/`nx`),
-because the features used here are not yet released to the package registry.
+The samples reference the platform as a sibling checkout (`../platform`, branch `nx`),
+because the features used here are not yet published to the package registry.
 
 ```sh
+corepack enable
 git clone https://github.com/3flows/platform.git
 (cd platform && git checkout nx && yarn install && yarn build)
 git clone https://github.com/3flows/platform-samples.git
 cd platform-samples/appointment-reminders
-npm install
-npm test          # runs every step
-npm run step:03   # runs a single step
-npm run step:21:registry   # multi-process steps have one script per process
+yarn install
+yarn test                 # runs every step
+yarn step:03              # runs a single step
+yarn step:21:registry     # multi-process steps have one script per process
 ```
