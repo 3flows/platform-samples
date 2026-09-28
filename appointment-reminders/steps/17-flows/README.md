@@ -1,15 +1,16 @@
-# Step 16 – Medallion layers and lineage
+# Step 17 – Flows
 
-The import keeps raw rows (bronze), cleaned rows (silver) and the domain model (gold).
-Every pipeline records what it read and wrote, so you can ask where data comes from.
+A partner practice refers patients in batches. Reception reviews every batch before anybody on it is texted.
+The `ReferralFlow` notifies reception, waits for the review, runs the import pipeline only if the batch is accepted,
+and tells the practice. While it waits, the run is a document in `datahub.flow_runs`.
 
 ```sh
-npm run step:16
-printf 'Name;Mobile;Date;Notes\nAda Lovelace;+1 555 000 0001;2030-01-15 10:00;\nBad Date;+1 555 000 0004;someday;\n' > legacy.csv
-curl -X POST localhost:3000/data/imports/appointments -H 'Content-Type: text/csv' --data-binary @legacy.csv
-curl -X POST localhost:3000/data/syncs/practice
-curl -X POST localhost:3000/data/pipelineRuns
-curl -X POST localhost:3000/data/lineage -H 'Content-Type: application/json' -d '{"asset":"entity:Customer"}'
+npm run step:17
+curl -X POST localhost:3000/data/flows/referrals -H 'Content-Type: application/json' \
+  -d '{"practice":"Hopper Family Practice","contact":"+15550000200","referrals":[{"name":"Dorothy Vaughan","phone":"+15550000011","at":"2030-02-01T09:00:00.000Z"}]}'
+curl -X POST localhost:3000/reception/pendingReviews
+curl -X POST localhost:3000/reception/reviewReferrals -H 'Content-Type: application/json' \
+  -d '{"runId":"<runId from the first response>","accepted":true,"by":"Grace"}'
 ```
 
-Tutorial: https://3flows.github.io/platform-docs/docs/tutorial/medallion-and-lineage
+Tutorial: https://3flows.github.io/platform-docs/docs/tutorial/flows

@@ -1,0 +1,9 @@
+name: registry
+
+# The phone book of the platform: services register here, and callers look them up.
+# In production, run it next to your other infrastructure, or use a backend other than memory.
+registries:
+  - name: DEFAULT
+    type: memory
+    port: 3100
+    basepath: .registry

@@ -1,0 +1,35 @@
+name: notifications
+
+services:
+  - name: NotificationsService
+
+https:
+  - name: api
+    port: 3001
+    services:
+      - name: NotificationsService
+
+smss:
+  - name: DEFAULT
+    type: memory
+
+mqs:
+  - name: DEFAULT
+    type: memory
+    use:
+      - NotificationsService
+
+# Where the registry is.
+registries:
+  - name: DEFAULT
+    type: http
+    parameters:
+      url: http://127.0.0.1:3100/.registry
+
+# Register every service on the `api` server, reachable at this URL. Heartbeats keep the entry alive.
+discovery:
+  registry: DEFAULT
+  register: true
+  advertise:
+    http: api
+    url: http://127.0.0.1:3001

@@ -28,7 +28,10 @@
     "step:18": "npm run build && node dist/steps/18-operations/main.js",
     "step:19": "npm run build && node dist/steps/19-admin/main.js",
     "step:20:notifications": "npm run build && node dist/steps/20-separate-processes/notifications-main.js",
-    "step:20:appointments": "node dist/steps/20-separate-processes/appointments-main.js"
+    "step:20:appointments": "node dist/steps/20-separate-processes/appointments-main.js",
+    "step:21:registry": "npm run build && node dist/steps/21-discovery/registry-main.js",
+    "step:21:notifications": "node dist/steps/21-discovery/notifications-main.js",
+    "step:21:appointments": "node dist/steps/21-discovery/appointments-main.js"
   },
   "dependencies": {
     "@3flows/platform": "file:../../platform"
