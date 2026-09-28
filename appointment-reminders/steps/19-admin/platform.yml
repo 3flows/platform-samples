@@ -1,0 +1,109 @@
+name: appointment-reminders
+
+services:
+  - name: AppointmentsService
+  - name: NotificationsService
+  - name: DataExchangeService
+  - name: ReceptionService
+
+# Pipelines are services. `register` starts them; `https` and `mqs` expose their triggers like any other route.
+pipelines:
+  register:
+    - name: AppointmentImportPipeline
+    - name: CrmCustomersPipeline
+    - name: PracticeSyncPipeline
+    - name: ReferralImportPipeline
+
+# Flows are services too. Their runs are kept in docs, so a flow can wait for days and survive restarts.
+flows:
+  state:
+    type: doc
+    db: datahub
+    collection: flow_runs
+  register:
+    - name: ReferralFlow
+
+https:
+  - name: api
+    port: 3000
+    services:
+      - name: AppointmentsService
+      # Every service on a server needs its own path, so the data endpoints live under /data.
+      - name: DataExchangeService
+        basepath: /data
+      # A pipeline is a service: its HTTP trigger is exposed like any other route.
+      - name: AppointmentImportPipeline
+        basepath: /data/imports
+      - name: PracticeSyncPipeline
+        basepath: /data/syncs
+      - name: ReferralFlow
+        basepath: /data/flows
+      - name: ReceptionService
+        basepath: /reception
+    # Built-in endpoints. Listing them replaces the defaults.
+    wellknown:
+      - type: ping
+        url: ping
+      - type: health
+        url: healthz # what the Kubernetes probes expect
+      - type: openapi.json
+        url: openapi.json
+      - type: metrics
+        url: metrics
+        disabled: true # scraped through a separate, internal port in production
+
+docs:
+  - name: DEFAULT
+    type: memory
+
+# Entities come from the ontology and are stored in the DEFAULT docs store.
+entities:
+  backend: docs
+  db: appointments
+  ontologies:
+    - AppointmentsOntology
+
+# The database of the partner practice. Read by the PracticeSyncPipeline.
+sqls:
+  - name: practice
+    type: memory # or postgres, mariadb, sqlite
+
+kvs:
+  - name: DEFAULT
+    type: memory
+
+smss:
+  - name: DEFAULT
+    type: memory
+
+mqs:
+  - name: DEFAULT
+    type: memory
+    use:
+      - NotificationsService
+      - CrmCustomersPipeline
+
+timers:
+  - service: AppointmentsService
+    name: reminders
+    cron: '0 * * * * *' # every minute, so you can watch it locally
+    runImmediatly: false
+
+# GraphQL on the same HTTP server: generated from the ontology, plus the service handlers.
+graphqls:
+  - name: graphql
+    useHttp: api
+    path: /graphql
+    ontologies:
+      - AppointmentsOntology
+    services:
+      - name: AppointmentsService
+
+# Read-only control-plane API. Disabled unless explicitly enabled.
+# In production, protect it with `auth` or expose it on an internal HTTP server only.
+admins:
+  - name: admin
+    useHttp: api
+    path: /admin
+    enabled: true
+    readonly: true
