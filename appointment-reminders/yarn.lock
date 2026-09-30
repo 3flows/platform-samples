@@ -6,8 +6,8 @@ __metadata:
   cacheKey: 10c0
 
 "@3flows/platform@npm:next":
-  version: 0.9.0-next.2
-  resolution: "@3flows/platform@npm:0.9.0-next.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%403flows%2Fplatform%2F0.9.0-next.2%2Ff26a4a5fd507a9bcb4f071a5aa1ed629a6cd888c"
+  version: 0.9.0-next.9
+  resolution: "@3flows/platform@npm:0.9.0-next.9::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%403flows%2Fplatform%2F0.9.0-next.9%2Fd225ceb9d9408ca8f25056b664450fe3c7db6e27"
   dependencies:
     "@apollo/server": "npm:^5.5.1"
     "@as-integrations/express5": "npm:^1.1.2"
@@ -66,7 +66,7 @@ __metadata:
     ws: "npm:^8.22.0"
     yaml: "npm:^2.9.1"
     zod: "npm:^4.6.5"
-  checksum: 10c0/5752b1996ca5521e6baeac2b4a2c7f42d840f8321a528ac8f64dc96c3fd97525cc9341078efbe59c4e183c91fd63f66aa88cf2bcdf6c0e7277d9bd8a8d96a653
+  checksum: 10c0/dba4f655d3aad5373cfb15b6e941be54916fa3afbc083ce28efa379a1b032a65d12b3aa22c66ff717d1528641cd894c5bdcd9bd69f610058cf983ba14e4ceac1
   languageName: node
   linkType: hard
 
