@@ -39,13 +39,13 @@ async function registered(service: string, timeoutMs = 5000) {
     throw new Error(`${service} did not register`);
 }
 
-describe('Step 21: find services through a registry', () => {
+describe('Step 22: find services through a registry', () => {
     before(async () => {
-        registry = spawn(process.execPath, ['dist/steps/21-discovery/registry-main.js'], { stdio: 'ignore' });
+        registry = spawn(process.execPath, ['dist/steps/22-discovery/registry-main.js'], { stdio: 'ignore' });
         await waitForHttp('http://127.0.0.1:3100/health');
-        notifications = spawn(process.execPath, ['dist/steps/21-discovery/notifications-main.js'], { stdio: 'ignore' });
+        notifications = spawn(process.execPath, ['dist/steps/22-discovery/notifications-main.js'], { stdio: 'ignore' });
         await registered('NotificationsService');
-        await Platform.run('./steps/21-discovery/appointments.yml');
+        await Platform.run('./steps/22-discovery/appointments.yml');
     });
 
     after(async () => {
@@ -54,19 +54,19 @@ describe('Step 21: find services through a registry', () => {
         await stop(registry);
     });
 
-    test('the code is identical to step 19; only YAML changed', () => {
+    test('the code is identical to step 20; only YAML changed', () => {
         for (const file of ['appointments', 'domain', 'exchange', 'flows', 'legacy', 'model', 'notifications', 'pipelines', 'reception', 'seed']) {
             assert.equal(
-                readFileSync(`steps/21-discovery/${file}.ts`, 'utf8'),
-                readFileSync(`steps/19-admin/${file}.ts`, 'utf8'),
-                `${file}.ts differs from step 19`
+                readFileSync(`steps/22-discovery/${file}.ts`, 'utf8'),
+                readFileSync(`steps/20-vaults/${file}.ts`, 'utf8'),
+                `${file}.ts differs from step 20`
             );
         }
     });
 
     test('NotificationsService is not running here, and appointments.yml has no URL for it', () => {
         assert.equal(Platform.has('NotificationsService'), false);
-        assert.doesNotMatch(readFileSync('steps/21-discovery/appointments.yml', 'utf8'), /3001/);
+        assert.doesNotMatch(readFileSync('steps/22-discovery/appointments.yml', 'utf8'), /3001/);
     });
 
     test('the registry knows where NotificationsService runs, and what it can do', async () => {

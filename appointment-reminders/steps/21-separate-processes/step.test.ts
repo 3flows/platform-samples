@@ -21,13 +21,13 @@ async function delivered(phone: string): Promise<number> {
     return mailbox?.messages ?? 0;
 }
 
-describe('Step 20: run notifications in a separate process', () => {
+describe('Step 21: run notifications in a separate process', () => {
     before(async () => {
-        notifications = spawn(process.execPath, ['dist/steps/20-separate-processes/notifications-main.js'], {
+        notifications = spawn(process.execPath, ['dist/steps/21-separate-processes/notifications-main.js'], {
             stdio: 'ignore'
         });
         await waitForHttp('http://127.0.0.1:3001/health');
-        await Platform.run('./steps/20-separate-processes/appointments.yml');
+        await Platform.run('./steps/21-separate-processes/appointments.yml');
     });
 
     after(async () => {
@@ -38,18 +38,24 @@ describe('Step 20: run notifications in a separate process', () => {
         }
     });
 
-    test('the code is identical to step 19; only YAML changed', () => {
+    test('the code is identical to step 20; only YAML changed', () => {
         for (const file of ['appointments', 'domain', 'exchange', 'flows', 'legacy', 'model', 'notifications', 'pipelines', 'reception', 'seed']) {
             assert.equal(
-                readFileSync(`steps/20-separate-processes/${file}.ts`, 'utf8'),
-                readFileSync(`steps/19-admin/${file}.ts`, 'utf8'),
-                `${file}.ts differs from step 19`
+                readFileSync(`steps/21-separate-processes/${file}.ts`, 'utf8'),
+                readFileSync(`steps/20-vaults/${file}.ts`, 'utf8'),
+                `${file}.ts differs from step 20`
             );
         }
     });
 
     test('NotificationsService is not running in this process', () => {
         assert.equal(Platform.has('NotificationsService'), false);
+    });
+
+    test('the Twilio secret lives in the notifications process only', () => {
+        const appointments = readFileSync('steps/21-separate-processes/appointments.yml', 'utf8');
+        assert.doesNotMatch(appointments, /twilio/);
+        assert.match(readFileSync('steps/21-separate-processes/notifications.yml', 'utf8'), /path: twilio/);
     });
 
     test('booking is confirmed by the remote notifications process', async () => {

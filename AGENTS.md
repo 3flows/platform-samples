@@ -21,6 +21,8 @@ Code that goes around it isn't.** When in doubt, choose the solution a reviewer 
 | Work that shouldn't block the caller | `mq().queue(name).send(...)` plus a queue route | `setTimeout`, fire-and-forget promises |
 | Something on a schedule | A timer route, with its schedule in `timers` | `setInterval`, cron libraries |
 | SMS or email | `sms()` / `email()` | Provider SDKs |
+| A password, API key or token for a provider | A `$vault` reference in YAML | `${{ ENV }}`, literals in YAML, `process.env` |
+| A secret the code itself needs at runtime | `trigger.context.vault().secret(path).key(k).get()` | Config files, `process.env` |
 | Another service's logic | `service(name).method(m).input(x).call()` | Importing its class, HTTP clients |
 | A domain model | An `ontology` with entities and relationships | Ad-hoc document shapes |
 | "The same thing" arriving twice | A **natural key** in the ontology (`{ key: [...] }`) | Find-or-create lookups |
@@ -38,7 +40,7 @@ If nothing in this table fits, stop and ask the human. Don't invent a new mechan
 2. **Use Yarn** (`packageManager: yarn@4.18.0`, `nodeLinker: node-modules`). Start new projects from `starter/`.
 3. **No infrastructure SDKs or drivers in application code.** No `mongodb`, `pg`, `redis`, `amqplib`, `twilio`, `@aws-sdk/*`. The platform owns them.
 4. **Reach infrastructure through `trigger.context`** (or `this.doc()`, `this.kv()`, … inside a service). Never construct providers yourself.
-5. **Code says *what*. YAML says *where* and *with what*.** Ports, providers (`memory`, `mongo`, `postgres`, …), connection strings, schedules, which services run in which process: all YAML. Secrets come from environment variables: `${{ MONGO_URL }}`.
+5. **Code says *what*. YAML says *where* and *with what*.** Ports, providers (`memory`, `mongo`, `postgres`, …), connection strings, schedules, which services run in which process: all YAML. Secrets come from a vault: `connectionString: { $vault: { path: mongo, key: connectionString } }`. Environment variables (`${{ … }}`) are for settings that aren't secret, and for bootstrapping the vault itself.
 6. **Every class used in YAML has `@Register()`**, and its module is imported by `main.ts`.
 7. **Every handler has input and output schemas** built with `t` (Zod). Handlers without input use `t.object({}).optional()`.
 8. **Answer with `trigger.ok(...)`**, exactly once.
@@ -185,18 +187,21 @@ timers:
 | Sending SMS inside a booking request | Publish to a queue, send from the queue route |
 | A URL of another service in code | `service(name)` in code, `remotes` or `discovery` in YAML |
 | Custom health or OpenAPI endpoints | `wellknown` in the `https` configuration |
+| A password in YAML, or `${{ DB_PASSWORD }}` | A `$vault` reference. Between environments, only the `vaults` entry changes |
+| One vault entry with every secret for every process | Each process's YAML references only the secrets that process uses |
 | Exposing `admins` on a public server | `readonly: true`, `auth`, or an internal `https` server |
 
 ## 5. Tests and the definition of done
 
 - Every change has a test with `node:test` that starts the platform with the app's YAML and **memory providers**:
   `before(() => Platform.run('./…/platform.yml'))`, `after(() => Platform.shutdown())`.
+- Tests use a `memory` vault with fake values in its `secrets`. Never put a real secret in YAML, tests or code.
 - Test through the public surface: HTTP, JSON-RPC, GraphQL, queues. Check effects through entities or `docs`.
 - `yarn test` passes. Don't mark work done that you haven't run.
 - Finish every change with a **reviewer's view**, three to five lines:
   - what the change does, in domain words,
   - which primitives it uses,
-  - what changed in YAML (exposure, providers, processes),
+  - what changed in YAML (exposure, providers, processes, secrets),
   - the one question the reviewer should really think about (a key, a mapping, who may call an endpoint, what happens to bad data).
 
   If the reviewer's view is hard to write, the change is too big or goes around the platform.
@@ -208,13 +213,16 @@ These are platform limitations. Work around them as described, and mention them 
 - **Failing timer runs of pipelines and flows crash the process.** A pipeline or flow with `.on.timer(...)` whose run throws (a source is down, the pipeline is paused) ends in an unhandled rejection. Don't pause timer-triggered pipelines. Prefer HTTP or queue triggers for anything that can fail, or accept the risk explicitly.
 - **Pipeline and flow timers ignore coordinators.** With several instances, they run in every instance. Make them idempotent (natural keys) or run them in one process only.
 - **Discovery resolves to the first registered instance.** It doesn't spread load. Give each instance its own `runtime.id`, or registrations overwrite each other.
+- **Secrets are read once, at startup.** `$vault` references are resolved before services start. `Platform.reload()` with unchanged YAML does nothing, so a rotated secret needs a restart. If code must see rotations, read the secret with `vault()` when it's used.
+- **`$vault` can't be used inside `vaults`.** The vault's own credentials come from `${{ … }}` or from the environment's identity (Azure managed identity, Kubernetes service account JWT for HashiCorp).
+- **Secret names must work in every backend.** Azure Key Vault allows only letters, digits and dashes: use `practice-database`, not `databases/practice`.
 - **Resuming a flow** has no public entry point yet. Use `Platform.get<Flows>('flows').resume({ event, correlation, payload })` from a handler, and nothing else from `Platform.get`.
 
 ## 7. Where to look
 
 1. **This file.**
 2. **The tutorial samples:** `appointment-reminders/steps/`. Find the step closest to your task and copy its patterns. Each step is small, tested and continues from the one before:
-   services 00–07, model and GraphQL 08–11, data hub 12–17, operations 18–19, processes 20–21.
+   services 00–07, model and GraphQL 08–11, data hub 12–17, operations and secrets 18–20, processes 21–22.
 3. **The docs:** https://3flows.github.io/platform-docs/, especially *Core concepts* and the *Configuration reference*.
 4. **The public types** of `@3flows/platform` (`.d.ts` files) for exact signatures.
 5. **The platform's own tests** for usage of features the samples don't cover.

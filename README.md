@@ -6,7 +6,7 @@ The samples back the tutorial in the [platform documentation](https://3flows.git
 ## Appointment reminders
 
 A small app that grows step by step – from Hello World to a domain model with a generated GraphQL API,
-a small data hub with pipelines and flows, built-in operations, and finally several cooperating processes.
+a small data hub with pipelines and flows, built-in operations with secrets in a vault, and finally several cooperating processes.
 Every step continues from the one before it.
 
 | Step | Concept |
@@ -35,11 +35,12 @@ Every step continues from the one before it.
 | **Part 4: Operate it** | |
 | [18-operations](appointment-reminders/steps/18-operations) | Built-in endpoints: ping, health, metrics, OpenAPI, JSON-RPC |
 | [19-admin](appointment-reminders/steps/19-admin) | Admin / control-plane API |
+| [20-vaults](appointment-reminders/steps/20-vaults) | `vaults` and `$vault` references – secrets out of YAML |
 | **Part 5: Scale it** | |
-| [20-separate-processes](appointment-reminders/steps/20-separate-processes) | `remotes` – same code, two processes |
-| [21-discovery](appointment-reminders/steps/21-discovery) | `registries` and `discovery` – no URLs in the caller's configuration |
+| [21-separate-processes](appointment-reminders/steps/21-separate-processes) | `remotes` – same code, two processes |
+| [22-discovery](appointment-reminders/steps/22-discovery) | `registries` and `discovery` – no URLs in the caller's configuration |
 
-Every step is complete and has a test. All steps use in-memory providers, so no database, broker, SMS account or SQL server is needed.
+Every step is complete and has a test. All steps use in-memory providers, so no database, broker, SMS account, SQL server or vault is needed.
 
 ## Start your own project
 
@@ -59,7 +60,7 @@ cd platform-samples/appointment-reminders
 yarn install
 yarn test                 # runs every step
 yarn step:03              # runs a single step
-yarn step:21:registry     # multi-process steps have one script per process
+yarn step:22:registry     # multi-process steps have one script per process
 ```
 
 To pick up a newer `next` build of the platform: `yarn up @3flows/platform@next`.

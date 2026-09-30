@@ -27,11 +27,12 @@
     "step:17": "yarn build && node dist/steps/17-flows/main.js",
     "step:18": "yarn build && node dist/steps/18-operations/main.js",
     "step:19": "yarn build && node dist/steps/19-admin/main.js",
-    "step:20:notifications": "yarn build && node dist/steps/20-separate-processes/notifications-main.js",
-    "step:20:appointments": "node dist/steps/20-separate-processes/appointments-main.js",
-    "step:21:registry": "yarn build && node dist/steps/21-discovery/registry-main.js",
-    "step:21:notifications": "node dist/steps/21-discovery/notifications-main.js",
-    "step:21:appointments": "node dist/steps/21-discovery/appointments-main.js"
+    "step:20": "yarn build && node dist/steps/20-vaults/main.js",
+    "step:21:notifications": "yarn build && node dist/steps/21-separate-processes/notifications-main.js",
+    "step:21:appointments": "node dist/steps/21-separate-processes/appointments-main.js",
+    "step:22:registry": "yarn build && node dist/steps/22-discovery/registry-main.js",
+    "step:22:notifications": "node dist/steps/22-discovery/notifications-main.js",
+    "step:22:appointments": "node dist/steps/22-discovery/appointments-main.js"
   },
   "dependencies": {
     "@3flows/platform": "next"

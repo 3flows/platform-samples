@@ -64,6 +64,16 @@ discovery:
   resolve:
     unknownServices: true
 
+# Where secrets come from. This process only gets the secrets it uses: the partner database.
+vaults:
+  - name: DEFAULT
+    type: memory
+    parameters:
+      # Fake values for development and tests. Real ones never appear in YAML.
+      secrets:
+        practice-database:
+          connectionString: postgres://reader:dev-password@localhost:5432/practice
+
 docs:
   - name: DEFAULT
     type: memory
@@ -78,7 +88,10 @@ entities:
 # The database of the partner practice. Read by the PracticeSyncPipeline.
 sqls:
   - name: practice
-    type: memory # or postgres, mariadb, sqlite
+    type: memory # postgres in production; the credentials are already in place
+    parameters:
+      connectionString:
+        $vault: { path: practice-database, key: connectionString }
 
 kvs:
   - name: DEFAULT

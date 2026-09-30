@@ -1,5 +1,4 @@
 import { Platform } from '@3flows/platform';
-import './notifications.js';
 
 const shutdown = async () => {
     await Platform.shutdown();
@@ -8,4 +7,4 @@ const shutdown = async () => {
 process.on('SIGTERM', () => void shutdown());
 process.on('SIGINT', () => void shutdown());
 
-await Platform.run('./steps/20-separate-processes/notifications.yml');
+await Platform.run('./steps/22-discovery/registry.yml');

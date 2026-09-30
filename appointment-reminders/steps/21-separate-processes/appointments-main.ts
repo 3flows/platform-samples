@@ -7,5 +7,5 @@ import './flows.js';
 import './reception.js';
 import { seedPractice } from './seed.js';
 
-await Platform.run('./steps/21-discovery/appointments.yml');
+await Platform.run('./steps/21-separate-processes/appointments.yml');
 await seedPractice();

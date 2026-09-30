@@ -1,0 +1,37 @@
+name: notifications
+
+services:
+  - name: NotificationsService
+
+https:
+  - name: api
+    port: 3001
+    services:
+      - name: NotificationsService
+
+# Where secrets come from. This process only gets the secrets it uses: Twilio.
+vaults:
+  - name: DEFAULT
+    type: memory
+    parameters:
+      # Fake values for development and tests. Real ones never appear in YAML.
+      secrets:
+        twilio:
+          accountSid: AC-dev-account
+          authToken: dev-auth-token
+
+smss:
+  - name: DEFAULT
+    type: memory # twilio in production; the credentials are already in place
+    parameters:
+      accountSid:
+        $vault: { path: twilio, key: accountSid }
+      authToken:
+        $vault: { path: twilio, key: authToken }
+      from: '+15550009999'
+
+mqs:
+  - name: DEFAULT
+    type: memory
+    use:
+      - NotificationsService
