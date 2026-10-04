@@ -1,6 +1,6 @@
 # Step 08 – Entities
 
-`Customer` and `Appointment` become entities with schemas, IDs, timestamps and a reference between them.
+Customers and appointments become entities with schemas, timestamps and a reference.
 
 ```sh
 yarn step:08

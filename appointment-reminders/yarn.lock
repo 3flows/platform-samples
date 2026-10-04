@@ -5,9 +5,18 @@ __metadata:
   version: 10
   cacheKey: 10c0
 
+"@3flows/platform-connector-slack@npm:next":
+  version: 0.1.0-next.8
+  resolution: "@3flows/platform-connector-slack@npm:0.1.0-next.8::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%403flows%2Fplatform-connector-slack%2F0.1.0-next.8%2F7a045832bc85923aef33b444249b2246bb7cd9ec"
+  peerDependencies:
+    "@3flows/platform": ">=0.9.0-next.20"
+  checksum: 10c0/a2cf1b99c8e967fece6c519c63f7267c9ec75995627d25d32f0b5fc46be373410728d8091edd3dff7aea0d6b31f3f5ceeff5e97cbeb30545d19b16e498507af3
+  languageName: node
+  linkType: hard
+
 "@3flows/platform@npm:next":
-  version: 0.9.0-next.9
-  resolution: "@3flows/platform@npm:0.9.0-next.9::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%403flows%2Fplatform%2F0.9.0-next.9%2Fd225ceb9d9408ca8f25056b664450fe3c7db6e27"
+  version: 0.9.0-next.20
+  resolution: "@3flows/platform@npm:0.9.0-next.20::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%403flows%2Fplatform%2F0.9.0-next.20%2F7799c6d9626286fdcbd52c511147286128eb51ff"
   dependencies:
     "@apollo/server": "npm:^5.5.1"
     "@as-integrations/express5": "npm:^1.1.2"
@@ -66,7 +75,7 @@ __metadata:
     ws: "npm:^8.22.0"
     yaml: "npm:^2.9.1"
     zod: "npm:^4.6.5"
-  checksum: 10c0/dba4f655d3aad5373cfb15b6e941be54916fa3afbc083ce28efa379a1b032a65d12b3aa22c66ff717d1528641cd894c5bdcd9bd69f610058cf983ba14e4ceac1
+  checksum: 10c0/deac84d239df175cef5577a4675cac49384fa07afaf2ba5fed2749e2694022c251516454decc9d4c568d626fbc4ebd96247a696a9e797d9dbfa59031c1e12507
   languageName: node
   linkType: hard
 
@@ -1352,6 +1361,7 @@ __metadata:
   resolution: "appointment-reminders@workspace:."
   dependencies:
     "@3flows/platform": "npm:next"
+    "@3flows/platform-connector-slack": "npm:next"
     "@types/node": "npm:^24.0.0"
     typescript: "npm:^6.0.3"
   languageName: unknown

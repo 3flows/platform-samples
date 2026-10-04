@@ -5,42 +5,46 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    # Every morning, so a new `next` build of the platform that breaks a sample shows up within a day.
+    - cron: '0 6 * * *'
 
 jobs:
-  appointment-reminders:
+  samples:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [appointment-reminders, starter]
     env:
-      # The platform repository is private. Provide a token with read access as PLATFORM_REPO_TOKEN.
-      PLATFORM_REPO_TOKEN: ${{ secrets.PLATFORM_REPO_TOKEN }}
+      # @3flows/platform is published to GitHub Packages, which needs a token with read:packages.
+      NPM_REPOSITORY_GH_TOKEN: ${{ secrets.NPM_REPOSITORY_GH_TOKEN || secrets.PLATFORM_REPO_TOKEN }}
     steps:
-      - name: Skip without platform access
-        if: env.PLATFORM_REPO_TOKEN == ''
-        run: echo "PLATFORM_REPO_TOKEN is not configured; skipping sample tests."
+      - name: Skip without package access
+        if: env.NPM_REPOSITORY_GH_TOKEN == ''
+        run: echo "NPM_REPOSITORY_GH_TOKEN is not configured; skipping sample tests."
 
       - uses: actions/checkout@v4
-        if: env.PLATFORM_REPO_TOKEN != ''
-        with:
-          path: platform-samples
-
-      - uses: actions/checkout@v4
-        if: env.PLATFORM_REPO_TOKEN != ''
-        with:
-          repository: 3flows/platform
-          ref: nx
-          token: ${{ secrets.PLATFORM_REPO_TOKEN }}
-          path: platform
+        if: env.NPM_REPOSITORY_GH_TOKEN != ''
 
       - uses: actions/setup-node@v4
-        if: env.PLATFORM_REPO_TOKEN != ''
+        if: env.NPM_REPOSITORY_GH_TOKEN != ''
         with:
           node-version: 24
 
-      - name: Build platform
-        if: env.PLATFORM_REPO_TOKEN != ''
-        working-directory: platform
-        run: corepack enable && yarn install && yarn build
+      - name: Install
+        if: env.NPM_REPOSITORY_GH_TOKEN != ''
+        working-directory: ${{ matrix.project }}
+        run: corepack enable && yarn install --immutable
 
-      - name: Test samples
-        if: env.PLATFORM_REPO_TOKEN != ''
-        working-directory: platform-samples/appointment-reminders
-        run: npm install && npm test
+      - name: Test against the locked platform version
+        if: env.NPM_REPOSITORY_GH_TOKEN != ''
+        working-directory: ${{ matrix.project }}
+        run: yarn test
+
+      - name: Test against the newest next build
+        if: env.NPM_REPOSITORY_GH_TOKEN != '' && github.event_name == 'schedule'
+        working-directory: ${{ matrix.project }}
+        env:
+          YARN_ENABLE_IMMUTABLE_INSTALLS: 'false'
+        run: yarn up '@3flows/*@next' && yarn test

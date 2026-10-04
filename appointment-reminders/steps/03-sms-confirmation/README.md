@@ -1,6 +1,6 @@
 # Step 03 – Confirm by SMS
 
-Booking sends a confirmation with `sms()`. The memory provider keeps messages in a local mailbox.
+Booking sends a confirmation through `sms`. The memory provider keeps messages in a mailbox.
 
 ```sh
 yarn step:03

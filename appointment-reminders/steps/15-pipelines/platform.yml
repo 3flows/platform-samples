@@ -1,0 +1,92 @@
+name: appointment-reminders
+
+services:
+  - name: AppointmentsService
+  - name: NotificationsService
+  - name: DataExchangeService
+
+# Pipelines are services. `register` starts them; `https` and `mqs` expose their triggers like any other route.
+pipelines:
+  register:
+    - name: AppointmentImportPipeline
+    - name: CrmCustomersPipeline
+
+https:
+  - name: api
+    port: 3000
+    services:
+      - name: AppointmentsService
+      # Every service on a server needs its own path, so the data endpoints live under /data.
+      - name: DataExchangeService
+        basepath: /data
+      # A pipeline is a service: its HTTP trigger is exposed like any other route.
+      - name: AppointmentImportPipeline
+        basepath: /data/imports
+
+docs:
+  - name: DEFAULT
+    type: memory
+
+# Entities come from the domain and are stored in the DEFAULT docs store.
+entities:
+  backend: docs
+  db: appointments
+  domains:
+    - Scheduling
+
+kvs:
+  - name: DEFAULT
+    type: memory
+
+smss:
+  - name: DEFAULT
+    type: memory
+
+mqs:
+  - name: DEFAULT
+    type: memory
+    use:
+      - NotificationsService
+      - CrmCustomersPipeline
+
+timers:
+  - service: AppointmentsService
+    name: reminders
+    cron: '0 * * * * *' # every minute, so you can watch it locally
+    runImmediatly: false
+
+# GraphQL on the same HTTP server: generated from the domain, plus the service handlers.
+graphqls:
+  - name: graphql
+    useHttp: api
+    path: /graphql
+    domains:
+      - Scheduling
+    services:
+      - name: AppointmentsService
+
+# The domain, projected as an ontology: what the concepts mean, for people, catalogs and agents.
+ontologies:
+  - name: scheduling
+    useHttp: api
+    path: /ontology
+    namespace: https://reminders.example.com/ontology/scheduling#
+    domains:
+      - Scheduling
+
+# An MCP server for the reception assistant: only the tools we choose, plus the ontology to understand them.
+mcps:
+  - name: reception-assistant
+    useHttp: api
+    path: /mcp
+    services:
+      - name: AppointmentsService
+        handlers:
+          - handler: bookAppointment
+            name: book_appointment
+            description: Book an appointment for a customer and send the confirmation SMS. Booking the same customer and time again returns the existing appointment.
+          - handler: listAppointments
+            name: list_appointments
+            description: List all appointments with the customer's name and phone number.
+    ontologies:
+      - name: scheduling

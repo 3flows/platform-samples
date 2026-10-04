@@ -1,6 +1,6 @@
 # Step 06 – Don't block booking
 
-Booking publishes an `appointment-booked` event to a queue; a queue route sends the confirmation.
+Booking publishes to a queue and answers right away. A queue route sends the SMS.
 
 ```sh
 yarn step:06

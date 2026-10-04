@@ -38,3 +38,22 @@ export async function waitForHttp(url: string, timeoutMs = 10000): Promise<void>
     }
     throw new Error(`Timed out waiting for ${url}`);
 }
+
+let slackEvents = 0;
+
+/**
+ * Plays Slack: a reaction in the reception channel, delivered through the memory connector's `inject` handler.
+ * The connector's server runs on port 3002 in the steps that use Slack.
+ */
+export function slackReaction(ts: string, reaction: string, user: string, id = `Ev${++slackEvents}`) {
+    return post<{ ok: boolean; delivered: number }>('http://127.0.0.1:3002/inject', {
+        id,
+        type: 'reaction.added',
+        payload: { type: 'reaction_added', user, reaction, item: { type: 'message', channel: 'C0RECEPTION', ts } }
+    });
+}
+
+/** Messages the memory Slack connector has posted. */
+export async function slackMessages(): Promise<Array<{ channel: string; text: string }>> {
+    return (await post('http://127.0.0.1:3002/outbox')).messages;
+}

@@ -1,6 +1,6 @@
 # Step 07 – A notifications service
 
-SMS responsibilities move to `NotificationsService`; `AppointmentsService` calls it with `service(...).method(...).call()`.
+SMS moves into its own service. Appointments calls it by name.
 
 ```sh
 yarn step:07

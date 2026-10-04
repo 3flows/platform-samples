@@ -4,7 +4,7 @@ import { Register, Route, Service, TriggerContext, handler, t } from '@3flows/pl
 const BookAppointment = t.object({
     name: t.string(),
     phone: t.string(),
-    at: t.string().describe('ISO date-time of the appointment')
+    at: t.string().datetime().describe('Start of the appointment, ISO 8601, e.g. 2030-01-15T10:00:00Z')
 });
 
 const Appointment = BookAppointment.extend({ id: t.string() });

@@ -1,6 +1,6 @@
 # Step 02 – Store appointments
 
-Appointments are stored with the `docs` primitive. Memory in development; MongoDB or PostgreSQL by changing YAML.
+Appointments move from an array into `docs`.
 
 ```sh
 yarn step:02

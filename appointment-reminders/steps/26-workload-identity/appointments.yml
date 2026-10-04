@@ -1,0 +1,198 @@
+name: appointments
+
+# Who this process is when it calls other processes.
+runtime:
+  identity:
+    provider: workloads
+    workload: platform://workloads/appointments
+
+services:
+  - name: AppointmentsService
+  - name: DataExchangeService
+  - name: ReceptionService
+
+# Pipelines are services. `register` starts them; `https` and `mqs` expose their triggers like any other route.
+pipelines:
+  register:
+    - name: AppointmentImportPipeline
+    - name: CrmCustomersPipeline
+    - name: PracticeSyncPipeline
+    - name: ReferralImportPipeline
+
+# Flows are services too. Their runs are kept in docs, so a flow can wait for days and survive restarts.
+flows:
+  state:
+    type: doc
+    db: datahub
+    collection: flow_runs
+  register:
+    - name: ReferralFlow
+
+https:
+  - name: api
+    port: 3000
+    services:
+      - name: AppointmentsService
+      # Every service on a server needs its own path, so the data endpoints live under /data.
+      - name: DataExchangeService
+        basepath: /data
+      # A pipeline is a service: its HTTP trigger is exposed like any other route.
+      - name: AppointmentImportPipeline
+        basepath: /data/imports
+      - name: PracticeSyncPipeline
+        basepath: /data/syncs
+      - name: ReferralFlow
+        basepath: /data/flows
+      - name: ReceptionService
+        basepath: /reception
+    # Built-in endpoints. Listing them replaces the defaults.
+    wellknown:
+      - type: ping
+        url: ping
+      - type: health
+        url: healthz # what the Kubernetes probes expect
+      - type: openapi.json
+        url: openapi.json
+      - type: metrics
+        url: metrics
+        disabled: true # scraped through a separate, internal port in production
+
+  # Slack's side of the app: the connector's inbound events and, with slack-memory, its outbox and inject.
+  - name: slack
+    port: 3002
+
+# Where the registry is.
+registries:
+  - name: DEFAULT
+    type: http
+    parameters:
+      url: http://127.0.0.1:3100/.registry
+
+# Services that don't run here are looked up in the registry. No URLs of other processes in this file.
+discovery:
+  registry: DEFAULT
+  resolve:
+    unknownServices: true
+
+# Where secrets come from. This process only gets the secrets it uses: the partner database, Slack, and the key to sign its calls.
+vaults:
+  - name: DEFAULT
+    type: memory
+    parameters:
+      # Fake values for development and tests. Real ones never appear in YAML.
+      secrets:
+        practice-database:
+          connectionString: postgres://reader:dev-password@localhost:5432/practice
+        slack-reception:
+          botToken: xoxb-dev-token
+          signingSecret: dev-signing-secret
+        workload-identity:
+          signingKey: dev-workload-signing-key-change-me
+
+# Signs a short-lived token for every call to another process. The key comes from the vault.
+identities:
+  - name: workloads
+    type: signed-jwt
+    parameters:
+      issuer: platform://identity/appointment-reminders
+      secret:
+        $vault: { path: workload-identity, key: signingKey }
+      ttlSeconds: 300
+
+docs:
+  - name: DEFAULT
+    type: memory
+
+# Entities come from the domain and are stored in the DEFAULT docs store.
+entities:
+  backend: docs
+  db: appointments
+  domains:
+    - Scheduling
+
+# The database of the partner practice. Read by the PracticeSyncPipeline.
+sqls:
+  - name: practice
+    type: memory # postgres in production; the credentials are already in place
+    parameters:
+      connectionString:
+        $vault: { path: practice-database, key: connectionString }
+
+kvs:
+  - name: DEFAULT
+    type: memory
+
+mqs:
+  - name: DEFAULT
+    type: memory
+    use:
+      - CrmCustomersPipeline # the confirmations queue moved with NotificationsService
+      - ReceptionService # Slack events are delivered to its connector routes through a queue
+
+timers:
+  - service: AppointmentsService
+    name: reminders
+    cron: '0 * * * * *' # every minute, so you can watch it locally
+    runImmediatly: false
+
+# GraphQL on the same HTTP server: generated from the domain, plus the service handlers.
+graphqls:
+  - name: graphql
+    useHttp: api
+    path: /graphql
+    domains:
+      - Scheduling
+    services:
+      - name: AppointmentsService
+
+# Read-only control-plane API. Disabled unless explicitly enabled.
+# In production, protect it with `auth` or expose it on an internal HTTP server only.
+admins:
+  - name: admin
+    useHttp: api
+    path: /admin
+    enabled: true
+    readonly: true
+
+# The domain, projected as an ontology: what the concepts mean, for people, catalogs and agents.
+ontologies:
+  - name: scheduling
+    useHttp: api
+    path: /ontology
+    namespace: https://reminders.example.com/ontology/scheduling#
+    domains:
+      - Scheduling
+
+# An MCP server for the reception assistant: only the tools we choose, plus the ontology to understand them.
+mcps:
+  - name: reception-assistant
+    useHttp: api
+    path: /mcp
+    services:
+      - name: AppointmentsService
+        handlers:
+          - handler: bookAppointment
+            name: book_appointment
+            description: Book an appointment for a customer and send the confirmation SMS. Booking the same customer and time again returns the existing appointment.
+          - handler: listAppointments
+            name: list_appointments
+            description: List all appointments with the customer's name and phone number.
+    ontologies:
+      - name: scheduling
+
+# Reception's Slack workspace. Operations are handlers, events are routes. slack-memory needs no workspace.
+connectors:
+  - name: reception
+    type: slack-memory # slack in production; the credentials are already in place
+    useHttp: slack # Slack posts its events to /connectors/reception/events on this server
+    parameters:
+      botToken:
+        $vault: { path: slack-reception, key: botToken }
+      signingSecret:
+        $vault: { path: slack-reception, key: signingSecret }
+    events:
+      retry:
+        attempts: 3
+        backoffMs: 200
+      dlq:
+        queue: reception.failed # events that still fail after three attempts

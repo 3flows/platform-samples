@@ -1,6 +1,6 @@
 # Step 05 – Remind only once
 
-A `kv` store remembers which appointments were already reminded.
+A `kv` marker per appointment: every reminder is sent once.
 
 ```sh
 yarn step:05

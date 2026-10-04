@@ -14,7 +14,7 @@ async function graphql<T = any>(query: string): Promise<T> {
     return response.data as T;
 }
 
-describe('Step 10: GraphQL from the ontology', () => {
+describe('Step 10: GraphQL from the domain', () => {
     before(async () => {
         await Platform.run('./steps/10-graphql/platform.yml');
         await post(`${base}/bookAppointment`, { name: 'Ada', phone: '+15550000001', at: inHours(20) });

@@ -1,6 +1,6 @@
 # Step 04 – Send reminders
 
-A timer route reminds appointments in the next 24 hours – and reveals a problem: every run reminds again.
+A timer route sends reminders for appointments in the next 24 hours. The schedule lives in YAML.
 
 ```sh
 yarn step:04

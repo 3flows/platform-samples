@@ -1,0 +1,72 @@
+name: notifications
+
+services:
+  - name: NotificationsService
+    # Callers ask for a token for this audience. Discovery tells them which one.
+    identity:
+      audience: platform://services/notifications
+
+https:
+  - name: api
+    port: 3001
+    services:
+      - name: NotificationsService
+        # Only workloads with a valid token for this audience may call. Anyone else gets 401.
+        auths:
+          - idp: workloads
+            identifies: service
+            audience:
+              - platform://services/notifications
+
+# Who may sign workload tokens: verified with the shared key from the vault.
+idps:
+  - name: workloads
+    provider: platform-jwt
+    parameters:
+      issuer: platform://identity/appointment-reminders
+      secret:
+        $vault: { path: workload-identity, key: signingKey }
+
+# Where secrets come from. This process only gets the secrets it uses: Twilio, and the key to verify callers.
+vaults:
+  - name: DEFAULT
+    type: memory
+    parameters:
+      # Fake values for development and tests. Real ones never appear in YAML.
+      secrets:
+        twilio:
+          accountSid: AC-dev-account
+          authToken: dev-auth-token
+        workload-identity:
+          signingKey: dev-workload-signing-key-change-me
+
+smss:
+  - name: DEFAULT
+    type: memory # twilio in production; the credentials are already in place
+    parameters:
+      accountSid:
+        $vault: { path: twilio, key: accountSid }
+      authToken:
+        $vault: { path: twilio, key: authToken }
+      from: '+15550009999'
+
+mqs:
+  - name: DEFAULT
+    type: memory
+    use:
+      - NotificationsService
+
+# Where the registry is.
+registries:
+  - name: DEFAULT
+    type: http
+    parameters:
+      url: http://127.0.0.1:3100/.registry
+
+# Register every service on the `api` server, reachable at this URL. Heartbeats keep the entry alive.
+discovery:
+  registry: DEFAULT
+  register: true
+  advertise:
+    http: api
+    url: http://127.0.0.1:3001

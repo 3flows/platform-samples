@@ -1,6 +1,6 @@
 # Step 00 – Hello World
 
-One service, one handler, ten lines of YAML.
+One service, one handler, one HTTP server.
 
 ```sh
 yarn step:00

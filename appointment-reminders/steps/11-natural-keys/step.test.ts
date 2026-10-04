@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, describe, test } from 'node:test';
 import { Platform } from '@3flows/platform';
 import { inHours, post, sentSms } from '../_shared/test-helpers.js';
-import { Appointments, AppointmentsOntology, Customers } from './domain.js';
+import { Appointments, Customers, Scheduling } from './domain.js';
 import './appointments.js';
 import './notifications.js';
 
@@ -17,8 +17,8 @@ describe('Step 11: identity from natural keys', () => {
         await Platform.shutdown();
     });
 
-    test('the ontology declares the natural keys', () => {
-        const [customer, appointment] = AppointmentsOntology.describe().entities;
+    test('the domain declares the natural keys', () => {
+        const [customer, appointment] = Scheduling.describe().entities;
         assert.deepEqual(customer.key, ['phone']);
         assert.deepEqual(appointment.key, ['customer', 'at']);
     });

@@ -14,12 +14,12 @@ docs:
   - name: DEFAULT
     type: memory
 
-# Entities come from the ontology and are stored in the DEFAULT docs store.
+# Entities come from the domain and are stored in the DEFAULT docs store.
 entities:
   backend: docs
   db: appointments
-  ontologies:
-    - AppointmentsOntology
+  domains:
+    - Scheduling
 
 kvs:
   - name: DEFAULT
@@ -41,12 +41,12 @@ timers:
     cron: '0 * * * * *' # every minute, so you can watch it locally
     runImmediatly: false
 
-# GraphQL on the same HTTP server: generated from the ontology, plus the service handlers.
+# GraphQL on the same HTTP server: generated from the domain, plus the service handlers.
 graphqls:
   - name: graphql
     useHttp: api
     path: /graphql
-    ontologies:
-      - AppointmentsOntology
+    domains:
+      - Scheduling
     services:
       - name: AppointmentsService
